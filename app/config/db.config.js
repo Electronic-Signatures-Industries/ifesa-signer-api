@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = {
-    url: "mongodb+srv://luis:MaGCkhkqvzvE0lR3@cluster0.beraluh.mongodb.net/Sign"
+    url: `mongodb+srv://luis:${process.env.DB_PASSWORD}@cluster0.beraluh.mongodb.net/Sign`
   };
