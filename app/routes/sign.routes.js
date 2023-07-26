@@ -13,10 +13,10 @@ module.exports = app => {
     router.get("/:id", signs.findOne);
   
     // Update a sign with id
-    router.put("/:id", signs.update);
+    // router.put("/:id", signs.update);
   
     // Delete a sign with id
-    router.delete("/:id", signs.delete);
+    // router.delete("/:id", signs.delete);
   
     app.use('/api/signs', router);
   };
