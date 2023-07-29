@@ -1,5 +1,57 @@
 const db = require("../models");
 const Sign = db.signs;
+const User = db.users;
+
+function getNameAndIdDoc(signatureString) {
+  const indexName1 = signatureString.indexOf('[f] nombre ')
+  const indexName2 = signatureString.indexOf(' - id')
+  const name = signatureString.substring(indexName1 + '[f] nombre '.length, indexName2).toUpperCase()
+
+  const indexId1 = signatureString.indexOf(' - id')
+  const indexId2 = signatureString.indexOf('ou=')
+  const idDoc = signatureString.substring(indexId1 + ' - id'.length + 1, indexId2 - 1).toUpperCase()
+
+  return { name, idDoc }
+}
+
+exports.verifyCount = async (req, res) => {
+  if (!req.body.str) {
+    return res.status(400).send({
+      message: "Data can not be empty!"
+    });
+  }
+
+  const signatureData = getNameAndIdDoc(req.body.str.toLowerCase());
+
+  var condition = { 
+    name: signatureData.name , 
+    idDoc: signatureData.idDoc, 
+  };
+  console.log('condition', condition)
+
+  try{
+    const count = await Sign
+        .find(condition)
+        .countDocuments();
+
+    let valid = true;
+
+    if (count > 3) {
+      const user = await User
+        .find(condition);
+      if(user.length === 0){
+        valid = false;
+      }
+    }
+    
+    res.send({ valid });
+  } catch(err) {
+    res.status(500).send({
+      message: 
+      err.message || "Some error occurred while retrieving signs."
+    });
+  }
+}
 
 // Create and Save a new Sign
 exports.create = (req, res) => {
@@ -9,21 +61,10 @@ exports.create = (req, res) => {
         return;
       }
     
-      const signatureString = req.body.signatureString.toLowerCase();
-
-      const indexName1 = signatureString.indexOf('[f] nombre ')
-      const indexName2 = signatureString.indexOf(' - id')
-      const name = signatureString.substring(indexName1 + '[f] nombre '.length, indexName2).toUpperCase()
-
-      const indexId1 = signatureString.indexOf(' - id')
-      const indexId2 = signatureString.indexOf('ou=')
-      const idDoc = signatureString.substring(indexId1 + ' - id'.length + 1, indexId2 - 1).toUpperCase()
+      const data = getNameAndIdDoc(req.body.signatureString.toLowerCase());
 
       // Create a Sign
-      const sign = new Sign({
-        name,
-        idDoc,
-      });
+      const sign = new Sign(data);
     
       // Save Sign in the database
       sign

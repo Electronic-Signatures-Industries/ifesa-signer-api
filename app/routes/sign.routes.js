@@ -11,6 +11,9 @@ module.exports = app => {
   
     // Retrieve a single sign with id
     router.get("/:id", signs.findOne);
+
+    // Retrieve signature count
+    router.post("/count", signs.verifyCount);
   
     // Update a sign with id
     // router.put("/:id", signs.update);
