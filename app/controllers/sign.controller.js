@@ -15,13 +15,13 @@ function getNameAndIdDoc(signatureString) {
 }
 
 exports.verifyCount = async (req, res) => {
-  if (!req.body.str) {
+  if (!req.body.signatureString) {
     return res.status(400).send({
       message: "Data can not be empty!"
     });
   }
 
-  const signatureData = getNameAndIdDoc(req.body.str.toLowerCase());
+  const signatureData = getNameAndIdDoc(req.body.signatureString.toLowerCase());
 
   var condition = { 
     name: signatureData.name , 
