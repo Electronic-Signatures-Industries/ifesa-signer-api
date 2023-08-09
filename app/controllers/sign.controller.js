@@ -32,7 +32,7 @@ exports.verifyCount = async (req, res) => {
 
     let valid = true;
 
-    if (count > 20) {
+    if (count >= 20) {
       const user = await User
         .find(condition);
       if(user.length === 0){
