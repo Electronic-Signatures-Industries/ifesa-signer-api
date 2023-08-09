@@ -5,6 +5,7 @@ module.exports = mongoose => {
         {
           name: String,
           idDoc: String,
+          plan: Number
         },
         { timestamps: true }
       )
