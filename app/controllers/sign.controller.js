@@ -21,13 +21,9 @@ exports.verifyCount = async (req, res) => {
     });
   }
 
-  const signatureData = getNameAndIdDoc(req.body.signatureString.toLowerCase());
+  const {name, idDoc} = getNameAndIdDoc(req.body.signatureString.toLowerCase());
 
-  var condition = { 
-    name: signatureData.name , 
-    idDoc: signatureData.idDoc, 
-  };
-  console.log('condition', condition)
+  var condition = { name, idDoc };
 
   try{
     const count = await Sign
@@ -36,11 +32,22 @@ exports.verifyCount = async (req, res) => {
 
     let valid = true;
 
-    if (count > 3) {
+    if (count > 20) {
       const user = await User
         .find(condition);
       if(user.length === 0){
         valid = false;
+      } else {
+        /*
+        Plans:
+        0 - 20 firmas
+        1 - 200 firmas
+        2 - 400 firmas
+        3 - Ilimitado
+        */
+        if(user[0].plan === 0 || (user[0].plan === 1 && count > 200) || (user[0].plan === 2 && count > 400)){
+          valid = false;
+        }
       }
     }
     
