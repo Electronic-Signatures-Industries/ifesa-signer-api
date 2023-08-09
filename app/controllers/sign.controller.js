@@ -45,7 +45,7 @@ exports.verifyCount = async (req, res) => {
         2 - 400 firmas
         3 - Ilimitado
         */
-        if(user[0].plan === 0 || (user[0].plan === 1 && count > 23) || (user[0].plan === 2 && count > 400)){
+        if(user[0].plan === 0 || (user[0].plan === 1 && count >= 200) || (user[0].plan === 2 && count >= 400)){
           valid = false;
         }
       }
